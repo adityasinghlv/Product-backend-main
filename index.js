@@ -2,10 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db');  // Assuming db.js is set up correctly
+const connectDB = require('./config/db'); 
 const http = require('http');
 const { Server } = require('socket.io');
-const Product = require('./models/Product'); // Import Product model
+const Product = require('./models/Product'); 
+const { fetchAndProcessProducts } = require('./utils/productUtils');
 
 // Import route modules
 const adminRoutes = require('./routes/adminRoutes');
@@ -50,26 +51,18 @@ app.use('/api/products', productRoutes);
 io.on('connection', (socket) => {
     const updateInterval = setInterval(async () => {
       try {
-        const products = await Product.find();
-  
-        if (products.length > 0) {
-          const shuffledProducts = products
-            .map((product) => ({ ...product.toObject() }))
-            .sort(() => Math.random() - 0.5);
-
-          io.emit('updateProducts', shuffledProducts);
-        }
+        const products = await fetchAndProcessProducts();
+        const shuffledProducts = [...products].sort(() => Math.random() - 0.5);
+        io.emit('updateProducts', shuffledProducts);
       } catch (err) {
-        console.error('Error fetching or shuffling products:', err.message);
+        console.error('Error emitting products:', err.message);
       }
-    }, 1000); // Emit updates every 1 second
+    }, 2000); // Emit updates every 2 seconds
   
     socket.on('disconnect', () => {
       clearInterval(updateInterval);
     });
-});
-
-  
+  });
 
 // Start the server
 const PORT = process.env.PORT || 5000;

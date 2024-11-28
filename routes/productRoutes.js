@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/Product');
 const adminAuth = require('../middleware/adminAuth');
+const { fetchAndProcessProducts } = require('../utils/productUtils');
 
 const router = express.Router();
 
@@ -18,18 +19,13 @@ router.post('/', adminAuth, async (req, res) => {
 // Get all products with category name populated
 router.get('/', async (req, res) => {
   try {
-      // Populate category field with category name
-      const products = await Product.find().sort({ position: 1 })  // Sort by position
-          .populate({
-              path: 'category',
-              select: 'name -_id'
-          });
-
-      res.status(200).json(products);
+    const products = await fetchAndProcessProducts();
+    res.status(200).json(products);
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 // Update a product
 router.put('/:id', adminAuth, async (req, res) => {
