@@ -20,7 +20,7 @@ const server = http.createServer(app);
 
 // Configure CORS for Express and Socket.IO
 const corsOptions = {
-  origin: 'http://localhost:5174',  // Replace with your frontend's URL
+  origin: '*',  // Replace with your frontend's URL
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 };
@@ -30,7 +30,7 @@ app.use(cors(corsOptions));  // Enable CORS for HTTP requests
 // Initialize Socket.IO with CORS options
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5174',  // Replace with your frontend's URL
+    origin: '*',  // Replace with your frontend's URL
     methods: ['GET', 'POST'],
   },
 });
