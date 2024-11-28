@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String },
     discountedPrice: { type: Number },
     imageUrl: { type: String, required: true }, // Save the image URL
+    position : {type : Number,  unique : true}
   },
   { timestamps: true }
 );

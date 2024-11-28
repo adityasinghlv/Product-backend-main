@@ -18,16 +18,16 @@ router.post('/', adminAuth, async (req, res) => {
 // Get all products with category name populated
 router.get('/', async (req, res) => {
   try {
-    // Populate category field with category name
-    const products = await Product.find()
-      .populate({
-        path: 'category',   // Path to the category field
-        select: 'name-_id'      // Select only the category name field
-      });
+      // Populate category field with category name
+      const products = await Product.find().sort({ position: 1 })  // Sort by position
+          .populate({
+              path: 'category',
+              select: 'name -_id'
+          });
 
-    res.status(200).json(products);
+      res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
   }
 });
 
